@@ -37,3 +37,5 @@ Dort ist beschrieben, wie du über GitHub Actions eine fertige `KitchenHustle.ex
 Wenn in GitHub unter **Actions** nichts angezeigt wird, nutze den Abschnitt **„Wenn bei Actions nichts angezeigt wird“** in `BUILD_EXE_WINDOWS.md`.
 
 Wenn dein Startscript anders heißt oder in einem Unterordner liegt, trage den Pfad beim Starten des Workflows im Feld **entry_script** ein (z. B. `src/main.py`).
+
+Hinweis: Falls im Branch keine Python-Startdatei liegt, erstellt der Workflow eine kleine Hinweis-EXE statt mit Fehler abzubrechen.

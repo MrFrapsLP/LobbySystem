@@ -57,3 +57,5 @@ Der Workflow unterstützt jetzt ein Eingabefeld **entry_script**.
 - Starte den Workflow erneut
 
 Ohne Eingabe sucht der Workflow automatisch nach `game.py`, `main.py`, `app.py` und dann nach einer anderen `.py`-Datei.
+
+Wenn gar keine passende `.py`-Datei gefunden wird, baut der Workflow als Notfall eine kleine Hinweis-EXE, damit der Build nicht komplett rot wird.
