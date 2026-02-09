@@ -35,3 +35,5 @@ Wenn bei dir `python3` nicht gefunden wird, nutze die EXE-Anleitung in:
 Dort ist beschrieben, wie du über GitHub Actions eine fertige `KitchenHustle.exe` bauen und herunterladen kannst.
 
 Wenn in GitHub unter **Actions** nichts angezeigt wird, nutze den Abschnitt **„Wenn bei Actions nichts angezeigt wird“** in `BUILD_EXE_WINDOWS.md`.
+
+Wenn dein Startscript anders heißt oder in einem Unterordner liegt, trage den Pfad beim Starten des Workflows im Feld **entry_script** ein (z. B. `src/main.py`).

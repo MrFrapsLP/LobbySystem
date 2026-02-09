@@ -10,9 +10,10 @@ Du brauchst dafür **kein Python auf deinem PC**.
 2. In GitHub auf den Tab **Actions** gehen.
 3. Workflow **Build Windows EXE** auswählen.
 4. Auf **Run workflow** klicken.
-5. Warten bis der Job fertig ist.
-6. Unter **Artifacts** die Datei **KitchenHustle-windows-exe** herunterladen.
-7. ZIP entpacken und `KitchenHustle.exe` starten.
+5. Falls dein Script nicht `game.py` heißt: im Feld **entry_script** den Pfad eintragen (z. B. `src/main.py`).
+6. Warten bis der Job fertig ist.
+7. Unter **Artifacts** die Datei **KitchenHustle-windows-exe** herunterladen.
+8. ZIP entpacken und `KitchenHustle.exe` starten.
 
 ## Wenn bei „Actions“ nichts angezeigt wird (wichtig)
 
@@ -46,3 +47,13 @@ py -m PyInstaller --noconfirm --onefile --windowed --name KitchenHustle game.py
 Die EXE liegt dann in `dist\KitchenHustle.exe`.
 
 Hinweis: Der Workflow sucht `game.py` automatisch im Repo, damit der Build auch funktioniert, wenn die Datei nicht direkt im Root liegt.
+
+## Fehler „game.py wurde im Repository nicht gefunden“
+
+Der Workflow unterstützt jetzt ein Eingabefeld **entry_script**.
+
+- Öffne **Actions -> Build Windows EXE -> Run workflow**
+- Trage bei **entry_script** deinen echten Dateipfad ein (z. B. `game.py`, `src/game.py` oder `main.py`)
+- Starte den Workflow erneut
+
+Ohne Eingabe sucht der Workflow automatisch nach `game.py`, `main.py`, `app.py` und dann nach einer anderen `.py`-Datei.
