@@ -68,26 +68,14 @@ jobs:
             Write-Host "Gefundene Dateien im Repo:"
             Get-ChildItem -Path . -Recurse -File | Select-Object -ExpandProperty FullName
 
-            $fallbackPath = Join-Path $env:RUNNER_TEMP "kitchen_hustle_fallback.py"
-            @'
-import tkinter as tk
-
-root = tk.Tk()
-root.title("Kitchen Hustle")
-root.geometry("520x260")
-label = tk.Label(
-    root,
-    text="Kein Python-Startscript im Repo gefunden.\nBitte setze im Workflow das Feld 'entry_script'.",
-    padx=20,
-    pady=20,
-    justify="center",
-)
-label.pack(expand=True)
-root.mainloop()
-'@ | Set-Content -Path $fallbackPath -Encoding UTF8
-
-            Write-Warning "Keine Python-Startdatei gefunden. Es wird ein Fallback-EXE gebaut."
-            $candidate = Get-Item $fallbackPath
+            $fallbackPath = Join-Path $env:GITHUB_WORKSPACE "fallback_notice.py"
+            if (Test-Path $fallbackPath) {
+              Write-Warning "Keine Python-Startdatei gefunden. Es wird fallback_notice.py als Hinweis-EXE gebaut."
+              $candidate = Get-Item $fallbackPath
+            } else {
+              Write-Error "Keine Python-Startdatei und keine fallback_notice.py gefunden."
+              exit 1
+            }
           }
 
           "GAME_SCRIPT=$($candidate.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
