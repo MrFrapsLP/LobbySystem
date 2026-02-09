@@ -44,3 +44,5 @@ py -m PyInstaller --noconfirm --onefile --windowed --name KitchenHustle game.py
 ```
 
 Die EXE liegt dann in `dist\KitchenHustle.exe`.
+
+Hinweis: Der Workflow sucht `game.py` automatisch im Repo, damit der Build auch funktioniert, wenn die Datei nicht direkt im Root liegt.
