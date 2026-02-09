@@ -6,7 +6,7 @@ on:
       entry_script:
         description: "game.py"
         required: false
-        default: ""
+        default: "game.py"
   push:
     branches:
       - main
