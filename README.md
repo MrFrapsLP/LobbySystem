@@ -33,3 +33,5 @@ Wenn bei dir `python3` nicht gefunden wird, nutze die EXE-Anleitung in:
 - `BUILD_EXE_WINDOWS.md`
 
 Dort ist beschrieben, wie du über GitHub Actions eine fertige `KitchenHustle.exe` bauen und herunterladen kannst.
+
+Wenn in GitHub unter **Actions** nichts angezeigt wird, nutze den Abschnitt **„Wenn bei Actions nichts angezeigt wird“** in `BUILD_EXE_WINDOWS.md`.

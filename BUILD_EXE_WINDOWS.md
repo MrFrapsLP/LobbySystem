@@ -14,6 +14,23 @@ Du brauchst dafür **kein Python auf deinem PC**.
 6. Unter **Artifacts** die Datei **KitchenHustle-windows-exe** herunterladen.
 7. ZIP entpacken und `KitchenHustle.exe` starten.
 
+## Wenn bei „Actions“ nichts angezeigt wird (wichtig)
+
+Prüfe diese Punkte:
+
+1. **Workflow-Datei ist auf GitHub gepusht?**
+   - Datei muss vorhanden sein: `.github/workflows/build-windows-exe.yml`.
+2. **Du bist auf dem richtigen Branch?**
+   - Der Workflow reagiert auf `main` und `work`.
+   - Wenn dein Branch anders heißt, erscheint er evtl. nicht automatisch bei Push.
+3. **Actions im Repo aktiviert?**
+   - In GitHub: `Settings -> Actions -> General`.
+   - Erlaubt sein muss mindestens „Allow all actions and reusable workflows“.
+4. **Erster Push schon erfolgt?**
+   - Vor dem ersten Push gibt es in GitHub noch keine Workflow-Datei, daher auch keinen Action-Eintrag.
+
+Wenn du möchtest, kann ich den Workflow auch so anpassen, dass er auf **allen Branches** bei Push läuft.
+
 ## Falls Windows SmartScreen warnt
 
 - Auf **Weitere Informationen** klicken
