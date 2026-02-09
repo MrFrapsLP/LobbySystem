@@ -73,8 +73,19 @@ jobs:
               Write-Warning "Keine Python-Startdatei gefunden. Es wird fallback_notice.py als Hinweis-EXE gebaut."
               $candidate = Get-Item $fallbackPath
             } else {
-              Write-Error "Keine Python-Startdatei und keine fallback_notice.py gefunden."
-              exit 1
+              Write-Warning "Keine Python-Startdatei und keine fallback_notice.py gefunden. Erzeuge temporäres Hinweis-Script."
+              $tempFallbackPath = Join-Path $env:RUNNER_TEMP "fallback_notice_generated.py"
+              @(
+                'import tkinter as tk',
+                '',
+                'root = tk.Tk()',
+                'root.title("Kitchen Hustle")',
+                'root.geometry("520x260")',
+                'label = tk.Label(root, text="Kein Python-Startscript im Repo gefunden.\nBitte setze im Workflow das Feld entry_script.", padx=20, pady=20, justify="center")',
+                'label.pack(expand=True)',
+                'root.mainloop()'
+              ) | Set-Content -Path $tempFallbackPath -Encoding UTF8
+              $candidate = Get-Item $tempFallbackPath
             }
           }
 
