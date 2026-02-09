@@ -23,8 +23,19 @@ jobs:
       - name: Install PyInstaller
         run: python -m pip install --upgrade pip pyinstaller
 
+      - name: Resolve game.py path
+        shell: pwsh
+        run: |
+          $candidate = Get-ChildItem -Path . -Recurse -File -Filter game.py | Select-Object -First 1
+          if (-not $candidate) {
+            Write-Error "game.py wurde im Repository nicht gefunden."
+            exit 1
+          }
+          "GAME_SCRIPT=$($candidate.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Nutze Script: $($candidate.FullName)"
+
       - name: Build EXE
-        run: pyinstaller --noconfirm --onefile --windowed --name KitchenHustle game.py
+        run: pyinstaller --noconfirm --onefile --windowed --name KitchenHustle "$env:GAME_SCRIPT"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
