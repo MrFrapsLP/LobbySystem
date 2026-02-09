@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       entry_script:
-        description: "Pfad zur Python-Startdatei (optional), z. B. game.py oder src/game.py"
+        description: "game.py"
         required: false
         default: ""
   push:
