@@ -42,3 +42,6 @@ Hinweis: Falls im gewählten Branch `game.py` fehlt, bricht der Workflow jetzt m
 
 
 Beim Workflow ist **entry_script** standardmäßig auf `game.py` gesetzt. Wenn der Build fehlschlägt, ist meist der falsche Branch gewählt oder der Pfad in `entry_script` stimmt nicht.
+
+
+Bei automatischen Push-Runs wird automatisch `game.py` verwendet, auch ohne manuelle Eingabe.

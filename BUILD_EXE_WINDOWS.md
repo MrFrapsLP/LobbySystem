@@ -61,3 +61,6 @@ Wenn diese Datei im gewählten Branch nicht existiert, bricht der Run mit einer 
 
 
 Wichtig: Wähle beim **Run workflow** den Branch aus, in dem `game.py` liegt. Sonst bricht der Build mit Fehler ab (statt eine Hinweis-EXE zu erzeugen).
+
+
+Hinweis: Bei `push`-Runs ist `entry_script` technisch leer (weil es kein manuelles Formular gibt). Der Workflow nutzt dann automatisch `game.py`.

@@ -35,8 +35,8 @@ jobs:
           Write-Host "Aktueller Branch/Ref: $env:GITHUB_REF"
 
           if ($manualInput -eq "") {
-            Write-Error "entry_script ist leer. Bitte z. B. game.py setzen."
-            exit 1
+            $manualInput = "game.py"
+            Write-Host "entry_script leer (z. B. bei push). Nutze Standard: $manualInput"
           }
 
           if (-not (Test-Path $manualInput)) {
