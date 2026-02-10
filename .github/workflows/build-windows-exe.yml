@@ -4,8 +4,8 @@ on:
   workflow_dispatch:
     inputs:
       entry_script:
-        description: "game.py"
-        required: false
+        description: "Pfad zur Python-Startdatei (optional), z. B. game.py oder src/game.py"
+        required: true
         default: "game.py"
   push:
     branches:
@@ -32,6 +32,7 @@ jobs:
         shell: pwsh
         run: |
           $manualInput = "${{ github.event.inputs.entry_script }}".Trim()
+          Write-Host "Aktueller Branch/Ref: $env:GITHUB_REF"
           $candidate = $null
 
           if ($manualInput -ne "") {
