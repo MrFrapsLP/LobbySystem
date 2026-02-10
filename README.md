@@ -45,3 +45,6 @@ Beim Workflow ist **entry_script** standardmäßig auf `game.py` gesetzt. Wenn d
 
 
 Bei automatischen Push-Runs wird automatisch `game.py` verwendet, auch ohne manuelle Eingabe.
+
+
+Push-Runs ohne `game.py` werden ohne Fehler übersprungen. Starte dann den Workflow manuell auf dem richtigen Branch.
