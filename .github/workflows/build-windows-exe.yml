@@ -1,61 +1,66 @@
-name: Build Windows EXE
+# Windows EXE ohne lokale Python-Installation
 
-on:
-  workflow_dispatch:
-    inputs:
-      entry_script:
-        description: "Pfad zur Python-Startdatei, z. B. game.py oder src/game.py"
-        required: true
-        default: "game.py"
-  push:
-    branches:
-      - main
-      - work
+Du hast den Fehler bekommen, dass `python3` nicht gefunden wurde. Das ist normal auf manchen Windows-Systemen.
 
-jobs:
-  build:
-    runs-on: windows-latest
+## Lösung: Fertige `.exe` über GitHub Actions bauen lassen
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+Du brauchst dafür **kein Python auf deinem PC**.
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+1. Repo zu GitHub pushen.
+2. In GitHub auf den Tab **Actions** gehen.
+3. Workflow **Build Windows EXE** auswählen.
+4. Auf **Run workflow** klicken.
+5. Das Feld **entry_script** ist standardmäßig `game.py`. Nur ändern, wenn deine Startdatei anders heißt (z. B. `src/main.py`).
+6. Warten bis der Job fertig ist.
+7. Unter **Artifacts** die Datei **KitchenHustle-windows-exe** herunterladen.
+8. ZIP entpacken und `KitchenHustle.exe` starten.
 
-      - name: Install PyInstaller
-        run: python -m pip install --upgrade pip pyinstaller
+## Wenn bei „Actions“ nichts angezeigt wird (wichtig)
 
-      - name: Resolve entry script path
-        shell: pwsh
-        run: |
-          $manualInput = "${{ github.event.inputs.entry_script }}".Trim()
-          Write-Host "Aktueller Branch/Ref: $env:GITHUB_REF"
+Prüfe diese Punkte:
 
-          if ($manualInput -eq "") {
-            Write-Error "entry_script ist leer. Bitte z. B. game.py setzen."
-            exit 1
-          }
+1. **Workflow-Datei ist auf GitHub gepusht?**
+   - Datei muss vorhanden sein: `.github/workflows/build-windows-exe.yml`.
+2. **Du bist auf dem richtigen Branch?**
+   - Der Workflow reagiert auf `main` und `work`.
+   - Wenn dein Branch anders heißt, erscheint er evtl. nicht automatisch bei Push.
+3. **Actions im Repo aktiviert?**
+   - In GitHub: `Settings -> Actions -> General`.
+   - Erlaubt sein muss mindestens „Allow all actions and reusable workflows“.
+4. **Erster Push schon erfolgt?**
+   - Vor dem ersten Push gibt es in GitHub noch keine Workflow-Datei, daher auch keinen Action-Eintrag.
 
-          if (-not (Test-Path $manualInput)) {
-            Write-Host "Gefundene Dateien im Repo:"
-            Get-ChildItem -Path . -Recurse -File | Select-Object -ExpandProperty FullName
-            Write-Error "Angegebenes Script '$manualInput' wurde im aktuellen Branch nicht gefunden. Bitte beim Run workflow den richtigen Branch wählen."
-            exit 1
-          }
+Wenn du möchtest, kann ich den Workflow auch so anpassen, dass er auf **allen Branches** bei Push läuft.
 
-          $candidate = Get-Item $manualInput
-          Write-Host "Nutze Script: $($candidate.FullName)"
-          "GAME_SCRIPT=$($candidate.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+## Falls Windows SmartScreen warnt
 
-      - name: Build EXE
-        shell: pwsh
-        run: pyinstaller --noconfirm --onefile --windowed --name KitchenHustle "$env:GAME_SCRIPT"
+- Auf **Weitere Informationen** klicken
+- Dann **Trotzdem ausführen**
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: KitchenHustle-windows-exe
-          path: dist/KitchenHustle.exe
+## Optional: Lokal mit Python bauen (falls später vorhanden)
+
+```powershell
+py -m pip install pyinstaller
+py -m PyInstaller --noconfirm --onefile --windowed --name KitchenHustle game.py
+```
+
+Die EXE liegt dann in `dist\KitchenHustle.exe`.
+
+Hinweis: Der Workflow verwendet das Feld `entry_script` (Standard `game.py`). Passe es an, wenn deine Startdatei in einem Unterordner liegt.
+
+## Fehler „game.py wurde im Repository nicht gefunden“
+
+Der Workflow hat ein Eingabefeld **entry_script** (Standard: `game.py`).
+
+- Öffne **Actions -> Build Windows EXE -> Run workflow**
+- Trage bei **entry_script** deinen echten Dateipfad ein (z. B. `game.py`, `src/game.py` oder `main.py`)
+- Starte den Workflow erneut
+
+Der Workflow baut jetzt **nur** das Script aus `entry_script` (Standard: `game.py`).
+Wenn diese Datei im gewählten Branch nicht existiert, bricht der Run mit einer klaren Fehlermeldung ab.
+
+
+Wichtig: Wähle beim **Run workflow** den Branch aus, in dem `game.py` liegt. Sonst bricht der Build mit Fehler ab (statt eine Hinweis-EXE zu erzeugen).
+
+
+Hinweis: Bei `push`-Runs ist `entry_script` technisch leer (weil es kein manuelles Formular gibt). Der Workflow nutzt dann automatisch `game.py`.
