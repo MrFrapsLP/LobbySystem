@@ -46,7 +46,7 @@ py -m PyInstaller --noconfirm --onefile --windowed --name KitchenHustle game.py
 
 Die EXE liegt dann in `dist\KitchenHustle.exe`.
 
-Hinweis: Der Workflow sucht `game.py` automatisch im Repo, damit der Build auch funktioniert, wenn die Datei nicht direkt im Root liegt.
+Hinweis: Der Workflow verwendet das Feld `entry_script` (Standard `game.py`). Passe es an, wenn deine Startdatei in einem Unterordner liegt.
 
 ## Fehler „game.py wurde im Repository nicht gefunden“
 
@@ -56,9 +56,8 @@ Der Workflow hat ein Eingabefeld **entry_script** (Standard: `game.py`).
 - Trage bei **entry_script** deinen echten Dateipfad ein (z. B. `game.py`, `src/game.py` oder `main.py`)
 - Starte den Workflow erneut
 
-Ohne Eingabe sucht der Workflow automatisch nach `game.py`, `main.py`, `app.py` und dann nach einer anderen `.py`-Datei.
+Der Workflow baut jetzt **nur** das Script aus `entry_script` (Standard: `game.py`).
+Wenn diese Datei im gewählten Branch nicht existiert, bricht der Run mit einer klaren Fehlermeldung ab.
 
-Wenn gar keine passende `.py`-Datei gefunden wird, nutzt der Workflow zuerst `fallback_notice.py`. Falls diese Datei im Branch fehlt, wird automatisch ein temporäres Hinweis-Script erzeugt, damit der Build nicht komplett rot wird.
 
-
-Wichtig: Wenn wieder die Hinweis-EXE kommt, wurde sehr wahrscheinlich der falsche Branch gebaut (ohne `game.py`). Wähle beim **Run workflow** den Branch aus, in dem `game.py` liegt.
+Wichtig: Wähle beim **Run workflow** den Branch aus, in dem `game.py` liegt. Sonst bricht der Build mit Fehler ab (statt eine Hinweis-EXE zu erzeugen).

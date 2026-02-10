@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       entry_script:
-        description: "Pfad zur Python-Startdatei (optional), z. B. game.py oder src/game.py"
+        description: "Pfad zur Python-Startdatei, z. B. game.py oder src/game.py"
         required: true
         default: "game.py"
   push:
@@ -33,63 +33,21 @@ jobs:
         run: |
           $manualInput = "${{ github.event.inputs.entry_script }}".Trim()
           Write-Host "Aktueller Branch/Ref: $env:GITHUB_REF"
-          $candidate = $null
 
-          if ($manualInput -ne "") {
-            if (Test-Path $manualInput) {
-              $candidate = Get-Item $manualInput
-              Write-Host "Nutze manuell angegebenes Script: $($candidate.FullName)"
-            } else {
-              Write-Error "Angegebenes Script '$manualInput' wurde nicht gefunden."
-              exit 1
-            }
+          if ($manualInput -eq "") {
+            Write-Error "entry_script ist leer. Bitte z. B. game.py setzen."
+            exit 1
           }
 
-          if (-not $candidate) {
-            $preferred = @("game.py", "main.py", "app.py")
-            foreach ($name in $preferred) {
-              $candidate = Get-ChildItem -Path . -Recurse -File -Filter $name | Select-Object -First 1
-              if ($candidate) {
-                Write-Host "Automatisch gefundenes Script: $($candidate.FullName)"
-                break
-              }
-            }
-          }
-
-          if (-not $candidate) {
-            $candidate = Get-ChildItem -Path . -Recurse -File -Include *.py |
-              Where-Object { $_.FullName -notmatch "\\.venv\\|\\venv\\|\\site-packages\\|\\tests?\\" } |
-              Select-Object -First 1
-            if ($candidate) {
-              Write-Host "Fallback Script verwendet: $($candidate.FullName)"
-            }
-          }
-
-          if (-not $candidate) {
+          if (-not (Test-Path $manualInput)) {
             Write-Host "Gefundene Dateien im Repo:"
             Get-ChildItem -Path . -Recurse -File | Select-Object -ExpandProperty FullName
-
-            $fallbackPath = Join-Path $env:GITHUB_WORKSPACE "fallback_notice.py"
-            if (Test-Path $fallbackPath) {
-              Write-Warning "Keine Python-Startdatei gefunden. Es wird fallback_notice.py als Hinweis-EXE gebaut."
-              $candidate = Get-Item $fallbackPath
-            } else {
-              Write-Warning "Keine Python-Startdatei und keine fallback_notice.py gefunden. Erzeuge temporäres Hinweis-Script."
-              $tempFallbackPath = Join-Path $env:RUNNER_TEMP "fallback_notice_generated.py"
-              @(
-                'import tkinter as tk',
-                '',
-                'root = tk.Tk()',
-                'root.title("Kitchen Hustle")',
-                'root.geometry("520x260")',
-                'label = tk.Label(root, text="Kein Python-Startscript im Repo gefunden.\nBitte setze im Workflow das Feld entry_script.", padx=20, pady=20, justify="center")',
-                'label.pack(expand=True)',
-                'root.mainloop()'
-              ) | Set-Content -Path $tempFallbackPath -Encoding UTF8
-              $candidate = Get-Item $tempFallbackPath
-            }
+            Write-Error "Angegebenes Script '$manualInput' wurde im aktuellen Branch nicht gefunden. Bitte beim Run workflow den richtigen Branch wählen."
+            exit 1
           }
 
+          $candidate = Get-Item $manualInput
+          Write-Host "Nutze Script: $($candidate.FullName)"
           "GAME_SCRIPT=$($candidate.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Build EXE
