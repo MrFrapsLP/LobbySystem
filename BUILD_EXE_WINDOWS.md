@@ -10,7 +10,7 @@ Du brauchst dafür **kein Python auf deinem PC**.
 2. In GitHub auf den Tab **Actions** gehen.
 3. Workflow **Build Windows EXE** auswählen.
 4. Auf **Run workflow** klicken.
-5. Falls dein Script nicht `game.py` heißt: im Feld **entry_script** den Pfad eintragen (z. B. `src/main.py`).
+5. Das Feld **entry_script** ist standardmäßig `game.py`. Nur ändern, wenn deine Startdatei anders heißt (z. B. `src/main.py`).
 6. Warten bis der Job fertig ist.
 7. Unter **Artifacts** die Datei **KitchenHustle-windows-exe** herunterladen.
 8. ZIP entpacken und `KitchenHustle.exe` starten.
@@ -50,7 +50,7 @@ Hinweis: Der Workflow sucht `game.py` automatisch im Repo, damit der Build auch 
 
 ## Fehler „game.py wurde im Repository nicht gefunden“
 
-Der Workflow unterstützt jetzt ein Eingabefeld **entry_script**.
+Der Workflow hat ein Eingabefeld **entry_script** (Standard: `game.py`).
 
 - Öffne **Actions -> Build Windows EXE -> Run workflow**
 - Trage bei **entry_script** deinen echten Dateipfad ein (z. B. `game.py`, `src/game.py` oder `main.py`)
@@ -59,3 +59,6 @@ Der Workflow unterstützt jetzt ein Eingabefeld **entry_script**.
 Ohne Eingabe sucht der Workflow automatisch nach `game.py`, `main.py`, `app.py` und dann nach einer anderen `.py`-Datei.
 
 Wenn gar keine passende `.py`-Datei gefunden wird, nutzt der Workflow zuerst `fallback_notice.py`. Falls diese Datei im Branch fehlt, wird automatisch ein temporäres Hinweis-Script erzeugt, damit der Build nicht komplett rot wird.
+
+
+Wichtig: Wenn wieder die Hinweis-EXE kommt, wurde sehr wahrscheinlich der falsche Branch gebaut (ohne `game.py`). Wähle beim **Run workflow** den Branch aus, in dem `game.py` liegt.
