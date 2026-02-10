@@ -42,6 +42,13 @@ jobs:
           if (-not (Test-Path $manualInput)) {
             Write-Host "Gefundene Dateien im Repo:"
             Get-ChildItem -Path . -Recurse -File | Select-Object -ExpandProperty FullName
+
+            if ("${{ github.event_name }}" -eq "push") {
+              Write-Warning "Push-Run ohne passendes Script '$manualInput'. Build wird übersprungen (kein Fehler)."
+              "SKIP_BUILD=true" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+              exit 0
+            }
+
             Write-Error "Angegebenes Script '$manualInput' wurde im aktuellen Branch nicht gefunden. Bitte beim Run workflow den richtigen Branch wählen."
             exit 1
           }
@@ -51,11 +58,18 @@ jobs:
           "GAME_SCRIPT=$($candidate.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Build EXE
+        if: env.SKIP_BUILD != 'true'
         shell: pwsh
         run: pyinstaller --noconfirm --onefile --windowed --name KitchenHustle "$env:GAME_SCRIPT"
 
       - name: Upload artifact
+        if: env.SKIP_BUILD != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: KitchenHustle-windows-exe
           path: dist/KitchenHustle.exe
+
+      - name: Push run notice
+        if: env.SKIP_BUILD == 'true'
+        shell: pwsh
+        run: Write-Host "Build wurde absichtlich übersprungen, da im Push-Branch kein passendes entry_script vorhanden war."
