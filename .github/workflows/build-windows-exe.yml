@@ -62,19 +62,108 @@ jobs:
               exit 0
             }
 
-            Write-Warning "Weder '$manualInput' im Push-Branch noch origin/main:game.py verfügbar. Erzeuge temporäres Hinweis-Script."
-            $tempFallbackPath = Join-Path $env:RUNNER_TEMP "fallback_notice_generated.py"
-            @(
-              'import tkinter as tk',
-              '',
-              'root = tk.Tk()',
-              'root.title("Kitchen Hustle")',
-              'root.geometry("520x260")',
-              'label = tk.Label(root, text="Kein Spielscript gefunden.\\nBitte Workflow manuell auf dem richtigen Branch starten.", padx=20, pady=20, justify="center")',
-              'label.pack(expand=True)',
-              'root.mainloop()'
-            ) | Set-Content -Path $tempFallbackPath -Encoding UTF8
-            Write-Host "Nutze generiertes Fallback-Script: $tempFallbackPath"
+                        Write-Warning "Weder '$manualInput' im Push-Branch noch origin/main:game.py verfügbar. Erzeuge eingebautes Fallback-Spielscript."
+            $tempFallbackPath = Join-Path $env:RUNNER_TEMP "kitchen_hustle_embedded.py"
+            @'
+import tkinter as tk
+from dataclasses import dataclass
+
+
+@dataclass
+class Worker:
+    name: str
+    base_cost: int
+    base_income: float
+    level: int = 0
+
+    @property
+    def cost(self) -> int:
+        return int(self.base_cost * (1.7 ** self.level))
+
+    @property
+    def income_per_second(self) -> float:
+        return self.level * self.base_income * (1 + self.level * 0.08)
+
+
+class EatventureLikeGame:
+    TICK_MS = 100
+
+    def __init__(self, root: tk.Tk):
+        self.root = root
+        self.root.title("Kitchen Hustle")
+        self.root.geometry("900x560")
+        self.root.configure(bg="#121212")
+
+        self.money = 25.0
+        self.multiplier = 1.0
+        self.workers = [
+            Worker("Koch", 20, 1.1),
+            Worker("Kellner", 60, 2.6),
+            Worker("Barista", 200, 7.0),
+        ]
+        self.selected_worker = 0
+        self._build_ui()
+        self._tick()
+
+    def _build_ui(self):
+        top = tk.Frame(self.root, bg="#1e1e1e", padx=16, pady=12)
+        top.pack(fill="x")
+        tk.Label(top, text="Kitchen Hustle", fg="#f5f5f5", bg="#1e1e1e", font=("Segoe UI", 22, "bold")).pack(anchor="w")
+        self.money_label = tk.Label(top, text="", fg="#97ff9f", bg="#1e1e1e", font=("Segoe UI", 14, "bold"))
+        self.money_label.pack(anchor="w")
+
+        body = tk.Frame(self.root, bg="#121212", padx=16, pady=14)
+        body.pack(fill="both", expand=True)
+        left = tk.Frame(body, bg="#181818", padx=12, pady=12)
+        left.pack(side="left", fill="both", expand=True)
+        right = tk.Frame(body, bg="#181818", padx=12, pady=12)
+        right.pack(side="right", fill="both", expand=True)
+
+        self.worker_buttons = []
+        for idx, w in enumerate(self.workers):
+            b = tk.Button(left, text="", command=lambda i=idx: self.select_worker(i), anchor="w", justify="left", padx=10, pady=8, bg="#2a2a2a", fg="#efefef", relief="flat", width=45)
+            b.pack(fill="x", pady=5)
+            self.worker_buttons.append(b)
+
+        tk.Button(right, text="Einstellen / Leveln", command=self.level_selected_worker, bg="#1f6f43", fg="white", relief="flat", padx=12, pady=10).pack(fill="x", pady=4)
+        tk.Button(right, text="Service-Boost (+8$)", command=self.manual_boost, bg="#2d5cff", fg="white", relief="flat", padx=12, pady=10).pack(fill="x", pady=4)
+        self._refresh_ui()
+
+    def select_worker(self, i):
+        self.selected_worker = i
+        self._refresh_ui()
+
+    def total_income(self):
+        return sum(w.income_per_second for w in self.workers) * self.multiplier
+
+    def manual_boost(self):
+        self.money += 8 * self.multiplier
+        self._refresh_ui()
+
+    def level_selected_worker(self):
+        w = self.workers[self.selected_worker]
+        if self.money >= w.cost:
+            self.money -= w.cost
+            w.level += 1
+            self._refresh_ui()
+
+    def _refresh_ui(self):
+        self.money_label.configure(text=f"Geld: {self.money:,.1f}$ | Einnahmen/Sekunde: {self.total_income():,.2f}$")
+        for idx, w in enumerate(self.workers):
+            self.worker_buttons[idx].configure(text=f"{w.name} | Level {w.level} | {w.income_per_second*self.multiplier:,.2f}$/s | Upgrade: {w.cost}$", bg="#334155" if idx == self.selected_worker else "#2a2a2a")
+
+    def _tick(self):
+        self.money += self.total_income() * (self.TICK_MS / 1000)
+        self._refresh_ui()
+        self.root.after(self.TICK_MS, self._tick)
+
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    EatventureLikeGame(root)
+    root.mainloop()
+'@ | Set-Content -Path $tempFallbackPath -Encoding UTF8
+            Write-Host "Nutze eingebautes Fallback-Spielscript: $tempFallbackPath"
             "GAME_SCRIPT=$tempFallbackPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
             exit 0
           }

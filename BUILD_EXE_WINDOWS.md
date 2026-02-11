@@ -66,4 +66,4 @@ Wichtig: Wähle beim **Run workflow** den Branch aus, in dem `game.py` liegt. So
 Hinweis: Bei `push`-Runs ist `entry_script` technisch leer (weil es kein manuelles Formular gibt). Der Workflow nutzt dann automatisch `game.py`.
 
 
-Hinweis: Push-Runs ohne `game.py` im aktuellen Branch versuchen automatisch `game.py` aus `origin/main` zu bauen. Falls auch das nicht verfügbar ist, wird ein temporäres Hinweis-Script erzeugt, damit trotzdem ein Artifact entsteht.
+Hinweis: Push-Runs ohne `game.py` im aktuellen Branch versuchen automatisch `game.py` aus `origin/main` zu bauen. Falls auch das nicht verfügbar ist, wird ein eingebautes Fallback-Spielscript erzeugt, damit trotzdem eine spielbare EXE als Artifact entsteht.
