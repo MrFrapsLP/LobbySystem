@@ -39,37 +39,42 @@ jobs:
             Write-Host "entry_script leer (z. B. bei push). Nutze Standard: $manualInput"
           }
 
-          if (-not (Test-Path $manualInput)) {
-            Write-Host "Gefundene Dateien im Repo:"
-            Get-ChildItem -Path . -Recurse -File | Select-Object -ExpandProperty FullName
+          if (Test-Path $manualInput) {
+            $candidate = Get-Item $manualInput
+            Write-Host "Nutze Script aus aktuellem Branch: $($candidate.FullName)"
+            "GAME_SCRIPT=$($candidate.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+            exit 0
+          }
 
-            if ("${{ github.event_name }}" -eq "push") {
-              Write-Warning "Push-Run ohne passendes Script '$manualInput'. Build wird übersprungen (kein Fehler)."
-              "SKIP_BUILD=true" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Host "Gefundene Dateien im Repo:"
+          Get-ChildItem -Path . -Recurse -File | Select-Object -ExpandProperty FullName
+
+          if ("${{ github.event_name }}" -eq "push") {
+            Write-Warning "Script '$manualInput' fehlt im Push-Branch. Versuche game.py aus origin/main zu verwenden."
+            git fetch origin main --depth=1
+            $tempMainScript = Join-Path $env:RUNNER_TEMP "game_from_main.py"
+            $scriptContent = git show origin/main:game.py 2>$null
+
+            if ($LASTEXITCODE -eq 0 -and $scriptContent) {
+              $scriptContent | Set-Content -Path $tempMainScript -Encoding UTF8
+              Write-Host "Nutze Fallback-Script aus origin/main: $tempMainScript"
+              "GAME_SCRIPT=$tempMainScript" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
               exit 0
             }
 
-            Write-Error "Angegebenes Script '$manualInput' wurde im aktuellen Branch nicht gefunden. Bitte beim Run workflow den richtigen Branch wählen."
+            Write-Error "Weder '$manualInput' im Push-Branch noch origin/main:game.py verfügbar."
             exit 1
           }
 
-          $candidate = Get-Item $manualInput
-          Write-Host "Nutze Script: $($candidate.FullName)"
-          "GAME_SCRIPT=$($candidate.FullName)" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Write-Error "Angegebenes Script '$manualInput' wurde im aktuellen Branch nicht gefunden. Bitte beim Run workflow den richtigen Branch wählen."
+          exit 1
 
       - name: Build EXE
-        if: env.SKIP_BUILD != 'true'
         shell: pwsh
         run: pyinstaller --noconfirm --onefile --windowed --name KitchenHustle "$env:GAME_SCRIPT"
 
       - name: Upload artifact
-        if: env.SKIP_BUILD != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: KitchenHustle-windows-exe
           path: dist/KitchenHustle.exe
-
-      - name: Push run notice
-        if: env.SKIP_BUILD == 'true'
-        shell: pwsh
-        run: Write-Host "Build wurde absichtlich übersprungen, da im Push-Branch kein passendes entry_script vorhanden war."
