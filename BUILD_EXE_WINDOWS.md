@@ -56,8 +56,8 @@ Der Workflow hat ein Eingabefeld **entry_script** (Standard: `game.py`).
 - Trage bei **entry_script** deinen echten Dateipfad ein (z. B. `game.py`, `src/game.py` oder `main.py`)
 - Starte den Workflow erneut
 
-Der Workflow baut jetzt **nur** das Script aus `entry_script` (Standard: `game.py`).
-Wenn diese Datei im gewählten Branch nicht existiert, bricht der Run mit einer klaren Fehlermeldung ab.
+Bei **manuellen Runs** baut der Workflow das Script aus `entry_script` (Standard: `game.py`).
+Wenn diese Datei im gewählten Branch nicht existiert, bricht der Run mit klarer Fehlermeldung ab.
 
 
 Wichtig: Wähle beim **Run workflow** den Branch aus, in dem `game.py` liegt. Sonst bricht der Build mit Fehler ab (statt eine Hinweis-EXE zu erzeugen).
@@ -66,4 +66,4 @@ Wichtig: Wähle beim **Run workflow** den Branch aus, in dem `game.py` liegt. So
 Hinweis: Bei `push`-Runs ist `entry_script` technisch leer (weil es kein manuelles Formular gibt). Der Workflow nutzt dann automatisch `game.py`.
 
 
-Hinweis: Push-Runs ohne `game.py` werden jetzt **ohne Fehler übersprungen**. Für eine echte EXE nutze **Run workflow** und wähle den Branch mit deiner Startdatei.
+Hinweis: Push-Runs ohne `game.py` im aktuellen Branch versuchen automatisch `game.py` aus `origin/main` zu bauen, damit trotzdem eine EXE entsteht.

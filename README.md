@@ -38,7 +38,7 @@ Wenn in GitHub unter **Actions** nichts angezeigt wird, nutze den Abschnitt **�
 
 Wenn dein Startscript anders heißt oder in einem Unterordner liegt, trage den Pfad beim Starten des Workflows im Feld **entry_script** ein (z. B. `src/main.py`).
 
-Hinweis: Falls im gewählten Branch `game.py` fehlt, bricht der Workflow jetzt mit klarer Fehlermeldung ab. Wähle dann den richtigen Branch oder setze `entry_script` korrekt.
+Hinweis: Bei manuellen Runs (`Run workflow`) muss `entry_script` im gewählten Branch existieren, sonst gibt es eine klare Fehlermeldung.
 
 
 Beim Workflow ist **entry_script** standardmäßig auf `game.py` gesetzt. Wenn der Build fehlschlägt, ist meist der falsche Branch gewählt oder der Pfad in `entry_script` stimmt nicht.
@@ -47,4 +47,4 @@ Beim Workflow ist **entry_script** standardmäßig auf `game.py` gesetzt. Wenn d
 Bei automatischen Push-Runs wird automatisch `game.py` verwendet, auch ohne manuelle Eingabe.
 
 
-Push-Runs ohne `game.py` werden ohne Fehler übersprungen. Starte dann den Workflow manuell auf dem richtigen Branch.
+Push-Runs ohne `game.py` im aktuellen Branch versuchen automatisch, `game.py` aus `main` zu verwenden.
