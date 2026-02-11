@@ -1,12 +1,14 @@
 # Kitchen Hustle (Eatventure-ähnliches PC-Spiel)
 
-Ein kleines **PC-Idle-Game in Python/Tkinter**, inspiriert von Eatventure:
+Jetzt deutlich näher an Eatventure mit Restaurant-Loop:
 
-- Stelle Team-Mitglieder ein (Koch, Kellner, Barista …)
-- Verdiene automatisch Geld pro Sekunde
-- Nutze manuelle Service-Boosts
-- Kaufe globale Küchen-Upgrades für Multiplikatoren
-- Erreiche Ziele über Einkommen und Reputation
+- **Kunden-Warteschlange** + laufender Kundenfluss
+- Mehrere **Stationen** (Limonade, Pommes, Burger, Sushi, Steak)
+- Stationen freischalten / leveln
+- **Manager-System** für Auto-Produktion
+- Globales Upgrade (Multiplikator)
+- Stadt-Fortschritt (Meta-Progression)
+- Save/Load über `savegame.json`
 
 ## Start
 
@@ -14,37 +16,15 @@ Ein kleines **PC-Idle-Game in Python/Tkinter**, inspiriert von Eatventure:
 python3 game.py
 ```
 
-> Voraussetzung: Python 3 mit Tkinter (auf vielen Systemen bereits enthalten).
-
 ## Steuerung
 
-- **Team-Button klicken**: Mitarbeiter auswählen
-- **„Einstellen / Leveln“**: ausgewählten Mitarbeiter verbessern
-- **„Service-Boost“**: sofort Geld verdienen
-- **„Küchen-Upgrade“**: globalen Einkommensmultiplikator erhöhen
+- Station links auswählen
+- **Station freischalten / leveln**
+- **Manager einstellen**
+- **Werbe-Boost** für Sofortgeld
+- **Globales Upgrade** für stärkere Einnahmen
+- **Speichern / Laden**
 
-Viel Spaß beim Ausbauen deines Restaurant-Imperiums 🚀
+## Ziel
 
-
-## Windows ohne Python: EXE erstellen
-
-Wenn bei dir `python3` nicht gefunden wird, nutze die EXE-Anleitung in:
-
-- `BUILD_EXE_WINDOWS.md`
-
-Dort ist beschrieben, wie du über GitHub Actions eine fertige `KitchenHustle.exe` bauen und herunterladen kannst.
-
-Wenn in GitHub unter **Actions** nichts angezeigt wird, nutze den Abschnitt **„Wenn bei Actions nichts angezeigt wird“** in `BUILD_EXE_WINDOWS.md`.
-
-Wenn dein Startscript anders heißt oder in einem Unterordner liegt, trage den Pfad beim Starten des Workflows im Feld **entry_script** ein (z. B. `src/main.py`).
-
-Hinweis: Bei manuellen Runs (`Run workflow`) muss `entry_script` im gewählten Branch existieren, sonst gibt es eine klare Fehlermeldung.
-
-
-Beim Workflow ist **entry_script** standardmäßig auf `game.py` gesetzt. Wenn der Build fehlschlägt, ist meist der falsche Branch gewählt oder der Pfad in `entry_script` stimmt nicht.
-
-
-Bei automatischen Push-Runs wird automatisch `game.py` verwendet, auch ohne manuelle Eingabe.
-
-
-Push-Runs ohne `game.py` im aktuellen Branch versuchen automatisch `game.py` aus `main` zu verwenden; wenn auch das fehlt, wird ein eingebautes Fallback-Spiel mit mehreren Upgrades/Buttons gebaut, damit ein spielbares Artifact entsteht.
+Verdiene genug Gesamtumsatz, um neue Städte zu erreichen und den Multiplikator weiter auszubauen.
