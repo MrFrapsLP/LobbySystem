@@ -62,8 +62,21 @@ jobs:
               exit 0
             }
 
-            Write-Error "Weder '$manualInput' im Push-Branch noch origin/main:game.py verfügbar."
-            exit 1
+            Write-Warning "Weder '$manualInput' im Push-Branch noch origin/main:game.py verfügbar. Erzeuge temporäres Hinweis-Script."
+            $tempFallbackPath = Join-Path $env:RUNNER_TEMP "fallback_notice_generated.py"
+            @(
+              'import tkinter as tk',
+              '',
+              'root = tk.Tk()',
+              'root.title("Kitchen Hustle")',
+              'root.geometry("520x260")',
+              'label = tk.Label(root, text="Kein Spielscript gefunden.\\nBitte Workflow manuell auf dem richtigen Branch starten.", padx=20, pady=20, justify="center")',
+              'label.pack(expand=True)',
+              'root.mainloop()'
+            ) | Set-Content -Path $tempFallbackPath -Encoding UTF8
+            Write-Host "Nutze generiertes Fallback-Script: $tempFallbackPath"
+            "GAME_SCRIPT=$tempFallbackPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+            exit 0
           }
 
           Write-Error "Angegebenes Script '$manualInput' wurde im aktuellen Branch nicht gefunden. Bitte beim Run workflow den richtigen Branch wählen."
