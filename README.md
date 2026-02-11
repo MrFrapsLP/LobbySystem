@@ -47,4 +47,4 @@ Beim Workflow ist **entry_script** standardmäßig auf `game.py` gesetzt. Wenn d
 Bei automatischen Push-Runs wird automatisch `game.py` verwendet, auch ohne manuelle Eingabe.
 
 
-Push-Runs ohne `game.py` im aktuellen Branch versuchen automatisch `game.py` aus `main` zu verwenden; wenn auch das fehlt, wird ein eingebautes Fallback-Spiel gebaut, damit ein spielbares Artifact entsteht.
+Push-Runs ohne `game.py` im aktuellen Branch versuchen automatisch `game.py` aus `main` zu verwenden; wenn auch das fehlt, wird ein eingebautes Fallback-Spiel mit mehreren Upgrades/Buttons gebaut, damit ein spielbares Artifact entsteht.
